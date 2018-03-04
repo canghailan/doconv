@@ -8,7 +8,7 @@ COPY worker.cgi /usr/lib/cgi-bin/
 
 RUN apt-get update \
  && apt-get install -y curl unzip fontconfig supervisor apache2 imagemagick openjdk-8-jre-headless libglu1-mesa libxinerama1 libdbus-glib-1-2 libcairo2 libsm6 fonts-arphic-* \
- && echo "install fonts" \
+ && echo "download fonts" \
  && mkdir -p /tmp/fonts/ /usr/share/fonts/truetype /usr/share/fonts/opentype \
  && echo "download source-sans-pro" \
  && curl -o /usr/share/fonts/opentype/SourceSansVariable-Italic.otf -OL 'https://github.com/adobe-fonts/source-sans-pro/releases/download/variable-fonts/SourceSansVariable-Italic.otf' \
