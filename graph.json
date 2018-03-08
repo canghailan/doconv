@@ -1,0 +1,60 @@
+{
+    "pdf": {
+        "jpg": {
+            "quality": 1
+        }
+    },
+    "ppt": {
+        "pdf": {
+            "quality": 0.8
+        },
+        "jpg": {
+            "quality": 0.8,
+            "path": [
+                "pdf",
+                "jpg"
+            ]
+        }
+    },
+    "pptx": {
+        "pdf": {
+            "quality": 0.8
+        },
+        "jpg": {
+            "quality": 0.8,
+            "path": [
+                "pdf",
+                "jpg"
+            ]
+        }
+    },
+    "docx": {
+        "pdf": {
+            "quality": 0.8
+        },
+        "jpg": {
+            "quality": 0.8,
+            "path": [
+                "pdf",
+                "jpg"
+            ]
+        }
+    },
+    "doc": {
+        "pdf": {
+            "exec": [
+                "unoconv",
+                "-f",
+                "pdf"
+            ],
+            "quality": 0.8
+        },
+        "jpg": {
+            "quality": 0.8,
+            "path": [
+                "pdf",
+                "jpg"
+            ]
+        }
+    }
+}

@@ -1,0 +1,28 @@
+{
+    "doc": {
+        "pdf": {
+            "quality": 0.8,
+            "exec": ["unoconv", "-f", "pdf"]
+        }
+    },
+    "docx": {
+        "pdf": {
+            "quality": 0.8
+        }
+    },
+    "ppt": {
+        "pdf": {
+            "quality": 0.8
+        }
+    },
+    "pptx": {
+        "pdf": {
+            "quality": 0.8
+        }
+    },
+    "pdf": {
+        "jpg": {
+            "quality": 1
+        }
+    }
+}
