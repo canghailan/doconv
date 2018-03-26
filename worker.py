@@ -14,8 +14,9 @@ graph = {}
 with open('graph.json') as f:
     graph = json.load(f)
 
+
 def get_conversion_plan(source, targets):
-    conversion_plan = {source:set()}
+    conversion_plan = {source: set()}
 
     for target in targets:
         conversion = graph[source][target]
@@ -29,8 +30,9 @@ def get_conversion_plan(source, targets):
                 if step not in conversion_plan:
                     conversion_plan[step] = set()
                 conversion_plan[step].add(step_next)
-    
+
     return conversion_plan
+
 
 workspace = '/workspace/'
 
@@ -39,11 +41,11 @@ request_file = request.getvalue('file')
 request_from = request.getvalue('from')
 request_to = request.getlist('to')
 
-temp = Path(workspace).joinpath(str(uuid.uuid4()))
-temp.mkdir(parents=True)
-
 name = os.path.basename(request_file)
 base_name, extension_name = os.path.splitext(name)
+
+temp = Path(workspace).joinpath(str(uuid.uuid4()))
+temp.mkdir(parents=True)
 
 paramters = {
     'temp': str(temp),
@@ -51,37 +53,24 @@ paramters = {
     'base_name': base_name
 }
 
+conversion_plan = get_conversion_plan(request_from, request_to)
+
+''' prepare source '''
 urllib.request.urlretrieve(request_file, str(temp.joinpath(name)))
 
-cmd_pdf = [
-    "unoconv",
-    "-f",
-    "pdf",
-    "-o",
-    "{temp}/{base_name}.pdf",
-    "{temp}/{name}"
-]
-cmd_pdf = [e.format_map(paramters) for e in cmd_pdf]
 
-child = subprocess.Popen(cmd_pdf, stdout=subprocess.PIPE)
-child_return = child.communicate()
+def convert(source):
+    targets = conversion_plan[source]
+    for target in targets:
+        cmd = [e.format_map(paramters) for e in graph[source][target]['exec']]
+        child = subprocess.Popen(cmd, stdout=subprocess.PIPE)
+        child_return = child.communicate()
+        convert(target)
 
-cmd_jpg = [
-    "convert",
-    "-density",
-    "200",
-    "-quality",
-    "100",
-    "-sharpen",
-    "0x1.0",
-    "{temp}/{base_name}.pdf",
-    "{temp}/{base_name}.jpg"
-]
-cmd_jpg = [e.format_map(paramters) for e in cmd_jpg]
 
-child = subprocess.Popen(cmd_jpg, stdout=subprocess.PIPE)
-child_return = child.communicate()
+convert(request_from)
 
 print('Content-Type: application/json;charset=utf-8')
 print('')
-print(json.dumps({'file':request_file, 'from': request_from, 'to': request_to, 'cmd_pdf': ' '.join(cmd_pdf), 'cmd_jpg': ' '.join(cmd_jpg), 'temp': str(temp), 'base_name': base_name, 'extension_name': extension_name}))
+print(json.dumps({'file': request_file, 'from': request_from, 'to': request_to, 'cmd_pdf': ' '.join(
+    cmd_pdf), 'cmd_jpg': ' '.join(cmd_jpg), 'temp': str(temp), 'base_name': base_name, 'extension_name': extension_name}))
