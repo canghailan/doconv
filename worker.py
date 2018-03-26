@@ -10,6 +10,28 @@ import urllib.request
 import subprocess
 from pathlib import Path
 
+graph = {}
+with open('graph.json') as f:
+    graph = json.load(f)
+
+def get_conversion_plan(source, targets):
+    conversion_plan = {source:set()}
+
+    for target in targets:
+        conversion = graph[source][target]
+        if 'path' in conversion:
+            path = conversion['path']
+            conversion_plan[source].add(path[0])
+
+            for i in range(len(path) - 1):
+                step = path[i]
+                step_next = path[i + 1]
+                if step not in conversion_plan:
+                    conversion_plan[step] = set()
+                conversion_plan[step].add(step_next)
+    
+    return conversion_plan
+
 workspace = '/workspace/'
 
 request = cgi.FieldStorage()
