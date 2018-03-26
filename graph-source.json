@@ -2,27 +2,69 @@
     "doc": {
         "pdf": {
             "quality": 0.8,
-            "exec": ["unoconv", "-f", "pdf"]
+            "exec": [
+                "unoconv",
+                "-f",
+                "pdf",
+                "-o",
+                "{temp}/{base_name}.pdf",
+                "{temp}/{name}"
+            ]
         }
     },
     "docx": {
         "pdf": {
-            "quality": 0.8
+            "quality": 0.8,
+            "exec": [
+                "unoconv",
+                "-f",
+                "pdf",
+                "-o",
+                "{temp}/{base_name}.pdf",
+                "{temp}/{name}"
+            ]
         }
     },
     "ppt": {
         "pdf": {
-            "quality": 0.8
+            "quality": 0.8,
+            "exec": [
+                "unoconv",
+                "-f",
+                "pdf",
+                "-o",
+                "{temp}/{base_name}.pdf",
+                "{temp}/{name}"
+            ]
         }
     },
     "pptx": {
         "pdf": {
-            "quality": 0.8
+            "quality": 0.8,
+            "exec": [
+                "unoconv",
+                "-f",
+                "pdf",
+                "-o",
+                "{temp}/{base_name}.pdf",
+                "{temp}/{name}"
+            ]
         }
     },
     "pdf": {
         "jpg": {
-            "quality": 1
+            "quality": 1,
+            "exec": [
+                "convert",
+                "-density",
+                "200",
+                "-quality",
+                "100",
+                "-sharpen",
+                "0x1.0",
+                "{temp}/{base_name}.pdf",
+                "{temp}/{base_name}.jpg"
+            ]
         }
     }
 }
