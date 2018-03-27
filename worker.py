@@ -14,7 +14,8 @@ from pathlib import Path
 try:
     ''' inputs '''
     BASE_DIR = '/doconv/'
-    BASE_URI = os.environ['BASE_URI'] if 'BASE_URI' in os.environ else 'http://127.0.0.1/doconv/'
+    SERVER_NAME = os.environ['SERVER_NAME'] if 'SERVER_NAME' in os.environ else '127.0.0.1'
+    BASE_URI = os.environ['BASE_URI'] if 'BASE_URI' in os.environ else 'http://{SERVER_NAME}/doconv/'.format(SERVER_NAME=SERVER_NAME)
 
     req = cgi.FieldStorage()
     req_file = req.getvalue('file')
