@@ -2,9 +2,10 @@ FROM ubuntu:latest
 
 LABEL maintainer="canghailan@gmail.com"
 
-WORKDIR /workspace/
+WORKDIR /doconv/
 COPY supervisord.conf /etc/supervisor/conf.d/
-COPY worker.cgi /usr/lib/cgi-bin/
+COPY graph.json /usr/lib/cgi-bin/graph.json
+COPY worker.py /usr/lib/cgi-bin/worker.cgi
 
 RUN apt-get update \
  && apt-get install -y curl unzip fontconfig supervisor apache2 imagemagick openjdk-8-jre-headless libglu1-mesa libxinerama1 libdbus-glib-1-2 libcairo2 libsm6 fonts-arphic-* \
@@ -55,9 +56,9 @@ RUN apt-get update \
  && chmod a+x /usr/lib/cgi-bin/worker.cgi \
  && echo "configure supervisord" \
  && mkdir -p /var/log/supervisor/ \
- && echo "make workspace" \
- && chmod a+rwx /workspace/ \
- && ln -s /workspace /var/www/html/ \
+ && echo "configure WORKDIR" \
+ && chmod a+rwx /doconv \
+ && ln -s /doconv /var/www/html/ \
  && echo "clean" \
  && rm -rf /var/lib/apt/lists/* \
  && rm -rf /tmp/*

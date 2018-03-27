@@ -2,68 +2,68 @@
     "doc": {
         "pdf": {
             "quality": 0.8,
-            "exec": [
+            "program": [
                 "unoconv",
                 "-f",
                 "pdf",
                 "-o",
-                "{temp}/{base_name}.pdf",
-                "{temp}/{name}"
+                "{base_dir}/{base_name}.pdf",
+                "{base_dir}/{file_name}"
             ]
         }
     },
     "docx": {
         "pdf": {
             "quality": 0.8,
-            "exec": [
+            "program": [
                 "unoconv",
                 "-f",
                 "pdf",
                 "-o",
-                "{temp}/{base_name}.pdf",
-                "{temp}/{name}"
+                "{base_dir}/{base_name}.pdf",
+                "{base_dir}/{file_name}"
             ]
         }
     },
     "ppt": {
         "pdf": {
             "quality": 0.8,
-            "exec": [
+            "program": [
                 "unoconv",
                 "-f",
                 "pdf",
                 "-o",
-                "{temp}/{base_name}.pdf",
-                "{temp}/{name}"
+                "{base_dir}/{base_name}.pdf",
+                "{base_dir}/{file_name}"
             ]
         }
     },
     "pptx": {
         "pdf": {
             "quality": 0.8,
-            "exec": [
+            "program": [
                 "unoconv",
                 "-f",
                 "pdf",
                 "-o",
-                "{temp}/{base_name}.pdf",
-                "{temp}/{name}"
+                "{base_dir}/{base_name}.pdf",
+                "{base_dir}/{file_name}"
             ]
         }
     },
     "pdf": {
         "jpg": {
             "quality": 1,
-            "exec": [
+            "program": [
                 "convert",
                 "-density",
                 "200",
                 "-quality",
-                "100",
+                "75",
                 "-sharpen",
                 "0x1.0",
-                "{temp}/{base_name}.pdf",
-                "{temp}/{base_name}.jpg"
+                "{base_dir}/{base_name}.pdf",
+                "{base_dir}/{base_name}.jpg"
             ]
         }
     }

@@ -3,74 +3,109 @@
 import cgi
 import cgitb
 import os
-import sys
+import time
 import json
 import uuid
 import urllib.request
+import urllib.parse
 import subprocess
 from pathlib import Path
 
-graph = {}
-with open('graph.json') as f:
-    graph = json.load(f)
+try:
+    ''' inputs '''
+    BASE_DIR = '/doconv/'
+    BASE_URI = os.environ['BASE_URI'] if 'BASE_URI' in os.environ else 'http://127.0.0.1/doconv/'
 
+    req = cgi.FieldStorage()
+    req_file = req.getvalue('file')
+    req_from = req.getvalue('from')
+    req_to = req.getlist('to')
+    req_callback = req.getvalue('callback')
 
-def get_conversion_plan(source, targets):
-    conversion_plan = {source: set()}
+    graph = {}
+    with open('graph.json') as f:
+        graph = json.load(f)
 
-    for target in targets:
-        conversion = graph[source][target]
-        if 'path' in conversion:
-            path = conversion['path']
-            conversion_plan[source].add(path[0])
+    ''' process inputs '''
+    file_name = os.path.basename(req_file)
+    base_name, extension_name = os.path.splitext(file_name)
+    temp_name = str(uuid.uuid4())
 
-            for i in range(len(path) - 1):
-                step = path[i]
-                step_next = path[i + 1]
-                if step not in conversion_plan:
-                    conversion_plan[step] = set()
-                conversion_plan[step].add(step_next)
+    base_dir = Path(BASE_DIR).joinpath(temp_name)
+    base_dir.mkdir(parents=True)
 
-    return conversion_plan
+    base_uri = urllib.parse.urljoin(BASE_URI, temp_name + '/')
 
+    if not req_from:
+        req_from = extension_name[1:]
 
-workspace = '/workspace/'
+    def get_conversion_plan(source, targets):
+        conversion_plan = {source: set()}
 
-request = cgi.FieldStorage()
-request_file = request.getvalue('file')
-request_from = request.getvalue('from')
-request_to = request.getlist('to')
+        for target in targets:
+            conversion = graph[source][target]
+            if 'path' in conversion:
+                path = conversion['path']
+                conversion_plan[source].add(path[0])
 
-name = os.path.basename(request_file)
-base_name, extension_name = os.path.splitext(name)
+                for i in range(len(path) - 1):
+                    step = path[i]
+                    step_next = path[i + 1]
+                    if step not in conversion_plan:
+                        conversion_plan[step] = set()
+                    conversion_plan[step].add(step_next)
 
-temp = Path(workspace).joinpath(str(uuid.uuid4()))
-temp.mkdir(parents=True)
+        return conversion_plan
 
-paramters = {
-    'temp': str(temp),
-    'name': name,
-    'base_name': base_name
-}
+    conversion_plan = get_conversion_plan(req_from, req_to)
 
-conversion_plan = get_conversion_plan(request_from, request_to)
+    paramters = {
+        'base_uri': base_uri,
+        'base_dir': str(base_dir),
+        'file_name': file_name,
+        'base_name': base_name
+    }
 
-''' prepare source '''
-urllib.request.urlretrieve(request_file, str(temp.joinpath(name)))
+    ''' prepare '''
+    urllib.request.urlretrieve(req_file, str(base_dir.joinpath(file_name)))
 
+    ''' convert '''
+    output = {
+        'source': {
+            'format': req_from,
+            'uri': [urllib.parse.urljoin(base_uri, file_name)]
+        },
+        'targets': [
+        ]
+    }
 
-def convert(source):
-    targets = conversion_plan[source]
-    for target in targets:
-        cmd = [e.format_map(paramters) for e in graph[source][target]['exec']]
-        child = subprocess.Popen(cmd, stdout=subprocess.PIPE)
-        child_return = child.communicate()
-        convert(target)
+    def convert(source):
+        if (source in conversion_plan):
+            targets = conversion_plan[source]
+            for target in targets:
+                program = [e.format_map(paramters)
+                           for e in graph[source][target]['program']]
 
+                timpstamp = time.time()
+                child = subprocess.Popen(program, stdout=subprocess.PIPE)
+                child_return = child.communicate()
+                conversion_time = time.time() - timpstamp
 
-convert(request_from)
+                output['targets'].append({
+                    'format': target,
+                    'uri': [urllib.parse.urljoin(base_uri, f) for f in os.listdir(str(base_dir)) if f.endswith('.' + target)],
+                    'time': str(conversion_time) + 's'
+                })
+                convert(target)
 
-print('Content-Type: application/json;charset=utf-8')
-print('')
-print(json.dumps({'file': request_file, 'from': request_from, 'to': request_to, 'cmd_pdf': ' '.join(
-    cmd_pdf), 'cmd_jpg': ' '.join(cmd_jpg), 'temp': str(temp), 'base_name': base_name, 'extension_name': extension_name}))
+    convert(req_from)
+
+    ''' output '''
+
+    print('Content-Type: application/json;charset=utf-8')
+    print('')
+    print(json.dumps(output))
+except BaseException as e:
+    print('Content-Type: application/json;charset=utf-8')
+    print('')
+    print(json.dumps({'error': str(e)}))

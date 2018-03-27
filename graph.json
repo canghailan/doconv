@@ -1,24 +1,15 @@
 {
-    "pdf": {
-        "jpg": {
-            "quality": 1
-        }
-    },
-    "ppt": {
+    "doc": {
         "pdf": {
-            "quality": 0.8
-        },
-        "jpg": {
             "quality": 0.8,
-            "path": [
+            "program": [
+                "unoconv",
+                "-f",
                 "pdf",
-                "jpg"
+                "-o",
+                "{base_dir}/{base_name}.pdf",
+                "{base_dir}/{file_name}"
             ]
-        }
-    },
-    "pptx": {
-        "pdf": {
-            "quality": 0.8
         },
         "jpg": {
             "quality": 0.8,
@@ -30,7 +21,15 @@
     },
     "docx": {
         "pdf": {
-            "quality": 0.8
+            "quality": 0.8,
+            "program": [
+                "unoconv",
+                "-f",
+                "pdf",
+                "-o",
+                "{base_dir}/{base_name}.pdf",
+                "{base_dir}/{file_name}"
+            ]
         },
         "jpg": {
             "quality": 0.8,
@@ -40,20 +39,59 @@
             ]
         }
     },
-    "doc": {
+    "ppt": {
         "pdf": {
-            "exec": [
+            "quality": 0.8,
+            "program": [
                 "unoconv",
                 "-f",
-                "pdf"
-            ],
-            "quality": 0.8
+                "pdf",
+                "-o",
+                "{base_dir}/{base_name}.pdf",
+                "{base_dir}/{file_name}"
+            ]
         },
         "jpg": {
             "quality": 0.8,
             "path": [
                 "pdf",
                 "jpg"
+            ]
+        }
+    },
+    "pptx": {
+        "pdf": {
+            "quality": 0.8,
+            "program": [
+                "unoconv",
+                "-f",
+                "pdf",
+                "-o",
+                "{base_dir}/{base_name}.pdf",
+                "{base_dir}/{file_name}"
+            ]
+        },
+        "jpg": {
+            "quality": 0.8,
+            "path": [
+                "pdf",
+                "jpg"
+            ]
+        }
+    },
+    "pdf": {
+        "jpg": {
+            "quality": 1,
+            "program": [
+                "convert",
+                "-density",
+                "200",
+                "-quality",
+                "75",
+                "-sharpen",
+                "0x1.0",
+                "{base_dir}/{base_name}.pdf",
+                "{base_dir}/{base_name}.jpg"
             ]
         }
     }
