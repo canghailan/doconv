@@ -39,25 +39,30 @@ try:
     if not req_from:
         req_from = extension_name[1:]
 
-    def get_conversion_plan(source, targets):
+    def generate_conversion_plan(source, targets):
         conversion_plan = {source: set()}
 
         for target in targets:
-            conversion = graph[source][target]
-            if 'path' in conversion:
-                path = conversion['path']
-                conversion_plan[source].add(path[0])
+            source_graph = graph[source]
+            if target in source_graph:
+                conversion = source_graph[target]
 
-                for i in range(len(path) - 1):
-                    step = path[i]
-                    step_next = path[i + 1]
-                    if step not in conversion_plan:
-                        conversion_plan[step] = set()
-                    conversion_plan[step].add(step_next)
+                if 'path' in conversion:
+                    path = conversion['path']
+
+                    conversion_plan[source].add(path[0])
+                    for i in range(len(path) - 1):
+                        step = path[i]
+                        step_next = path[i + 1]
+                        if step not in conversion_plan:
+                            conversion_plan[step] = set()
+                        conversion_plan[step].add(step_next)
+                else:
+                    conversion_plan[source].add(target)
 
         return conversion_plan
 
-    conversion_plan = get_conversion_plan(req_from, req_to)
+    conversion_plan = generate_conversion_plan(req_from, req_to)
 
     paramters = {
         'base_uri': base_uri,
