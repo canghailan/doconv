@@ -41,7 +41,7 @@ RUN apt-get update \
  && find /tmp/fonts/ -name "*.otf" | xargs -I {} cp {} /usr/share/fonts/opentype \
  && fc-cache -fv \
  && echo "install LibreOffice" \
- && curl -o /tmp/LibreOffice.tar.gz -OL 'http://download.documentfoundation.org/libreoffice/stable/6.0.2/deb/x86_64/LibreOffice_6.0.2_Linux_x86-64_deb.tar.gz' \
+ && curl -o /tmp/LibreOffice.tar.gz -OL 'http://mirror.clarkson.edu/tdf/libreoffice/stable/6.0.2/deb/x86_64/LibreOffice_6.0.2_Linux_x86-64_deb.tar.gz' \
  && tar -xzvf /tmp/LibreOffice.tar.gz -C /tmp/ \
  && dpkg -i /tmp/LibreOffice*/DEBS/*.deb \
  && echo "install pandoc" \
